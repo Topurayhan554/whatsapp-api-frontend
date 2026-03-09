@@ -8,7 +8,16 @@ import MessageLog from "../components/Message/MessageLog";
 const DashboardPage = () => {
   const { isConnected } = useWhatsApp();
   const navigate = useNavigate();
-  const [messages, setMessages] = useState([]);
+
+  // localStorage message load
+  const [messages, setMessages] = useState(() => {
+    try {
+      const saved = localStorage.getItem("whatsapp_messages");
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
 
   // Disconnected = Home
   useEffect(() => {
@@ -17,9 +26,20 @@ const DashboardPage = () => {
     }
   }, [isConnected]);
 
-  // message log
+  // messages localStorage a save
+  useEffect(() => {
+    localStorage.setItem("whatsapp_messages", JSON.stringify(messages));
+  }, [messages]);
+
+  // new message log
   const handleMessageSent = (newMessage) => {
     setMessages((prev) => [newMessage, ...prev]);
+  };
+
+  // Message log clear
+  const handleClearLog = () => {
+    setMessages([]);
+    localStorage.removeItem("whatsapp_messages");
   };
 
   return (
@@ -56,11 +76,8 @@ const DashboardPage = () => {
 
         {/* Main Content */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Message Form */}
           <MessageForm onMessageSent={handleMessageSent} />
-
-          {/* Message Log */}
-          <MessageLog messages={messages} />
+          <MessageLog messages={messages} onClearLog={handleClearLog} />
         </div>
       </div>
     </div>
