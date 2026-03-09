@@ -1,12 +1,17 @@
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
+
 const Button = ({
   children,
   onClick,
   type = "button",
   disabled = false,
+  loading = false,
   variant = "primary",
   fullWidth = false,
+  icon = null,
 }) => {
-  const base = "px-4 py-2 rounded-lg font-medium transition-all duration-200";
+  const base =
+    "flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-200";
 
   const variants = {
     primary: "bg-green-600 text-white hover:bg-green-700 disabled:bg-green-300",
@@ -18,14 +23,19 @@ const Button = ({
     <button
       type={type}
       onClick={onClick}
-      disabled={disabled}
+      disabled={disabled || loading}
       className={`
-        ${base} 
-        ${variants[variant]} 
+        ${base}
+        ${variants[variant]}
         ${fullWidth ? "w-full" : ""}
-        ${disabled ? "cursor-not-allowed" : "cursor-pointer"}
+        ${disabled || loading ? "cursor-not-allowed" : "cursor-pointer"}
       `}
     >
+      {loading ? (
+        <AiOutlineLoading3Quarters className="animate-spin text-lg" />
+      ) : (
+        icon && <span className="text-lg">{icon}</span>
+      )}
       {children}
     </button>
   );
