@@ -1,4 +1,4 @@
-import Loader from "../../components/common/Loader";
+import Loader from "../common/Loader";
 import { useWhatsApp } from "../../hooks/useWhatsApp";
 
 const QRDisplay = () => {
