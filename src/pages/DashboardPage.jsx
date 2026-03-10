@@ -4,12 +4,14 @@ import { useWhatsApp } from "../hooks/useWhatsApp";
 import ConnectionStatus from "../components/Dashboard/ConnectionStatus";
 import MessageForm from "../components/Message/MessageForm";
 import MessageLog from "../components/Message/MessageLog";
+import { MdDashboard } from "react-icons/md";
+import { BsCheckCircleFill, BsXCircleFill, BsClock } from "react-icons/bs";
+import Loader from "../components/common/Loader";
 
 const DashboardPage = () => {
-  const { isConnected } = useWhatsApp();
+  const { isConnected, isLoading } = useWhatsApp();
   const navigate = useNavigate();
 
-  // localStorage message load
   const [messages, setMessages] = useState(() => {
     try {
       const saved = localStorage.getItem("whatsapp_messages");
@@ -19,38 +21,49 @@ const DashboardPage = () => {
     }
   });
 
-  // Disconnected = Home
   useEffect(() => {
-    if (!isConnected) {
+    if (!isLoading && !isConnected) {
       navigate("/");
     }
-  }, [isConnected]);
+  }, [isConnected, isLoading]);
 
-  // messages localStorage a save
   useEffect(() => {
     localStorage.setItem("whatsapp_messages", JSON.stringify(messages));
   }, [messages]);
 
-  // new message log
   const handleMessageSent = (newMessage) => {
     setMessages((prev) => [newMessage, ...prev]);
   };
 
-  // Message log clear
   const handleClearLog = () => {
     setMessages([]);
     localStorage.removeItem("whatsapp_messages");
   };
 
+  const totalSent = messages.filter((m) => m.status === "sent").length;
+  const totalFailed = messages.filter((m) => m.status === "failed").length;
+
+  // Loading spinner
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <Loader message="Checking connection..." />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Header */}
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-800">Dashboard</h1>
-          <p className="text-gray-400 text-sm mt-1">
-            Send messages via WhatsApp API
-          </p>
+        <div className="mb-6 flex items-center gap-2">
+          <MdDashboard className="text-green-600 text-3xl" />
+          <div>
+            <h1 className="text-2xl font-bold text-gray-800">Dashboard</h1>
+            <p className="text-gray-400 text-sm">
+              Send messages via WhatsApp API
+            </p>
+          </div>
         </div>
 
         {/* Connection Status */}
@@ -59,17 +72,28 @@ const DashboardPage = () => {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-2 gap-4 mb-6">
+        <div className="grid grid-cols-3 gap-4 mb-6">
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
-            <p className="text-gray-400 text-sm">Total Sent</p>
-            <p className="text-3xl font-bold text-green-600 mt-1">
-              {messages.filter((m) => m.status === "sent").length}
-            </p>
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-gray-400 text-sm">Total Sent</p>
+              <BsCheckCircleFill className="text-green-500 text-lg" />
+            </div>
+            <p className="text-3xl font-bold text-green-600">{totalSent}</p>
           </div>
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
-            <p className="text-gray-400 text-sm">Failed</p>
-            <p className="text-3xl font-bold text-red-500 mt-1">
-              {messages.filter((m) => m.status === "failed").length}
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-gray-400 text-sm">Failed</p>
+              <BsXCircleFill className="text-red-500 text-lg" />
+            </div>
+            <p className="text-3xl font-bold text-red-500">{totalFailed}</p>
+          </div>
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-gray-400 text-sm">Total</p>
+              <BsClock className="text-blue-400 text-lg" />
+            </div>
+            <p className="text-3xl font-bold text-blue-500">
+              {messages.length}
             </p>
           </div>
         </div>

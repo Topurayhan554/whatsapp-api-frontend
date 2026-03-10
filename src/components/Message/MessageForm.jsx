@@ -1,10 +1,7 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useWhatsApp } from "../../hooks/useWhatsApp";
-import Button from "../common/Button";
-import { MdSend } from "react-icons/md";
-import { FaPhone } from "react-icons/fa";
-import { BsChatTextFill } from "react-icons/bs";
+import Button from "../../components/common/Button";
 import { sendMessage } from "../../services/api";
 
 const MessageForm = ({ onMessageSent }) => {
@@ -13,7 +10,10 @@ const MessageForm = ({ onMessageSent }) => {
   const [message, setMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // WhatsApp connected check
     if (!isConnected) {
       toast.error("WhatsApp is not connected!");
       return;
@@ -24,6 +24,7 @@ const MessageForm = ({ onMessageSent }) => {
       const response = await sendMessage(phone, message);
       toast.success("Message sent successfully!");
 
+      // Parent message
       onMessageSent({
         phone,
         message,
@@ -32,16 +33,11 @@ const MessageForm = ({ onMessageSent }) => {
         status: "sent",
       });
 
+      // Form clear
       setPhone("");
       setMessage("");
     } catch (error) {
       toast.error(error.message);
-      onMessageSent({
-        phone,
-        message,
-        timestamp: new Date().toISOString(),
-        status: "failed",
-      });
     } finally {
       setIsSending(false);
     }
@@ -49,16 +45,12 @@ const MessageForm = ({ onMessageSent }) => {
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-      <h2 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-        <MdSend className="text-green-600 text-xl" />
-        Send Message
-      </h2>
+      <h2 className="text-lg font-bold text-gray-800 mb-4">📨 Send Message</h2>
 
       <div className="flex flex-col gap-4">
-        {/* Phone */}
+        {/* Phone Number */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1">
-            <FaPhone className="text-green-500 text-xs" />
+          <label className="block text-sm font-medium text-gray-700 mb-1">
             Phone Number
           </label>
           <input
@@ -66,14 +58,13 @@ const MessageForm = ({ onMessageSent }) => {
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
             placeholder="01712345678"
-            className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 text-gray-700 text-sm"
+            className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 text-gray-700"
           />
         </div>
 
         {/* Message */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1">
-            <BsChatTextFill className="text-green-500 text-xs" />
+          <label className="block text-sm font-medium text-gray-700 mb-1">
             Message
           </label>
           <textarea
@@ -81,24 +72,19 @@ const MessageForm = ({ onMessageSent }) => {
             onChange={(e) => setMessage(e.target.value)}
             placeholder="Type your message here..."
             rows={4}
-            className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 text-gray-700 resize-none text-sm"
+            className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 text-gray-700 resize-none"
           />
-          <p
-            className={`text-xs text-right mt-1 ${
-              message.length > 900 ? "text-red-400" : "text-gray-400"
-            }`}
-          >
+          {/* Character count */}
+          <p className="text-xs text-gray-400 text-right mt-1">
             {message.length}/1000
           </p>
         </div>
 
-        {/* Button */}
+        {/* Submit Button */}
         <Button
           onClick={handleSubmit}
           disabled={isSending || !phone || !message}
-          loading={isSending}
           fullWidth
-          icon={<MdSend />}
         >
           {isSending ? "Sending..." : "Send Message"}
         </Button>
