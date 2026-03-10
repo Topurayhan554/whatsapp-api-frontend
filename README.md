@@ -78,44 +78,34 @@ whatsapp-frontend/
 ## Getting Started 🚀
 
 ### Requirements
-
 - Node.js v18 or higher
 - npm v8 or higher
-- WhatsApp API Backend running on port 3000
 
-### Installation
+---
 
-#### 1. Clone the repository
+### Step 1: Backend Setup আগে করো
 
+👉 [WhatsApp API Backend](https://github.com/Topurayhan554/whatsapp-api-backend)
 ```bash
-git clone https://github.com/your-username/whatsapp-frontend.git
-cd whatsapp-frontend
-```
-
-#### 2. Install dependencies
-
-```bash
+git clone https://github.com/Topurayhan554/whatsapp-api-backend
+cd whatsapp-api-backend
 npm install
-```
-
-#### 3. Setup environment variables
-
-```bash
-cp .env
-```
-
-#### 4. Run the frontend
-
-```bash
-# Development
 npm run dev
-
-# Production Build
-npm run build
 ```
 
-#### 5. Open browser
+Backend `http://localhost:3000`
 
+---
+
+### Step 2: Frontend Setup
+```bash
+git clone https://github.com/Topurayhan554/whatsapp-api-frontend
+cd whatsapp-frontend
+npm install
+npm run dev
+```
+
+#### Browser open:
 ```
 http://localhost:5173
 ```
@@ -187,8 +177,6 @@ Message গেলো ✅
 ## Backend Repository 🔗
 
 > Make sure the backend is running before starting the frontend.
-
-👉 [WhatsApp API Backend](https://github.com/Topurayhan554/whatsapp-api-backend)
 
 ---
 
