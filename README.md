@@ -83,7 +83,7 @@ whatsapp-frontend/
 
 ---
 
-### Step 1: Backend Setup আগে করো
+### Step 1: Backend Setup
 
 👉 [WhatsApp API Backend](https://github.com/Topurayhan554/whatsapp-api-backend)
 ```bash
